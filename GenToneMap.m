@@ -1,12 +1,12 @@
 function J = GenToneMap(im)
 % ==============================================
-%   Éú³ÉÉ«µ÷Í¼ 'T'
+%   ç”Ÿæˆè‰²è°ƒå›¾ 'J'
 %  
 %   Paras:
-%   @im        : ÊäÈëÍ¼Ïñ
+%   @im        : è¾“å…¥å›¾åƒ
 %
     
-    %% Éè¶¨²ÎÊı
+    %% è®¾å®šå‚æ•°
     Ub = 225;
     Ua = 105;
     
@@ -31,7 +31,7 @@ function J = GenToneMap(im)
     Omega2 = 22;
     Omega3 = 2;
     
-    %% ÀíÏëµÄÄ¿±êÖ±·½Í¼
+    %% ç†æƒ³çš„ç›®æ ‡ç›´æ–¹å›¾
     histgramTarget = zeros(256, 1);
     total = 0;
     for ii = 0 : 255
@@ -50,9 +50,9 @@ function J = GenToneMap(im)
     end
     histgramTarget(:, 1) = histgramTarget(:, 1)/total;
     
-    %% Ö±·½Í¼Æ¥Åä
+    %% ç›´æ–¹å›¾åŒ¹é…
     J = histeq(im, histgramTarget);
-    %% ¾ùÖµÂË²¨
+    %% å‡å€¼æ»¤æ³¢
     G = fspecial('average', 10);
     J = imfilter(J, G,'same');
     
