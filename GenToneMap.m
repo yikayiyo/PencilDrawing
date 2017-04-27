@@ -1,12 +1,12 @@
 function J = GenToneMap(im)
 % ==============================================
-%   Compute the tone map 'T'
+%   生成色调图 'T'
 %  
 %   Paras:
-%   @im        : input image ranging value from 0 to 1.
+%   @im        : 输入图像
 %
     
-    %% Parameters
+    %% 设定参数
     Ub = 225;
     Ua = 105;
     
@@ -17,19 +17,21 @@ function J = GenToneMap(im)
     
     % groups from dark to light
     % 1st group
-    Omega1 = 42;
-    Omega2 = 29;
-    Omega3 = 29;
+
+%     Omega1 = 42;
+%     Omega2 = 29;
+%     Omega3 = 29;
     % 2nd group
-    Omega1 = 52;
-    Omega2 = 37;
-    Omega3 = 11;
+%     Omega1 = 52;
+%     Omega2 = 37;
+%     Omega3 = 11;
+
     % 3rd group
     Omega1 = 76;
     Omega2 = 22;
     Omega3 = 2;
     
-    %% Compute the target histgram
+    %% 理想的目标直方图
     histgramTarget = zeros(256, 1);
     total = 0;
     for ii = 0 : 255
@@ -47,14 +49,11 @@ function J = GenToneMap(im)
         total = total + histgramTarget(ii+1, 1);
     end
     histgramTarget(:, 1) = histgramTarget(:, 1)/total;
-
-%     %% Smoothing
-%     im = medfilt2(im, [5 5]);
     
-    %% Histgram matching
+    %% 直方图匹配
     J = histeq(im, histgramTarget);
-    
-    %% Smoothing
+    %% 均值滤波
     G = fspecial('average', 10);
     J = imfilter(J, G,'same');
+    
 end

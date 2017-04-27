@@ -1,19 +1,19 @@
 function T = GenPencil(im, P, J)
 % ==============================================
-%   Compute the pencil map 'T'
+%   生成素描纹理 'T'
 %  
 %   Paras:
-%   @im        : input image ranging value from 0 to 1.
-%   @P         : the pencil texture.
-%   @J         : the tone map.
+%   @im        : 输入图像
+%   @P         : 素描纹理
+%   @J         : 色调图
 %
 
-    %% Parameters
-    theta = 0.2;
+    %% 参数设定
+    lambda = 0.2;
     
     [H, W, ~] = size(im);
 
-    %% Initialization
+    %% 
     P = imresize(P, [H, W]);
     P = reshape(P, H*W, 1);
     logP = log(P);
@@ -28,16 +28,14 @@ function T = GenPencil(im, P, J)
     Dy = spdiags([-e, e], [0, 1], H*W, H*W);
     
     %% Compute matrix A and b
-    A = theta * (Dx * Dx' + Dy * Dy') + (logP)' * logP;
+    A = lambda * (Dx * Dx' + Dy * Dy') + (logP)' * logP;
     b = (logP)' * logJ;
     
-    %% Conjugate gradient
+    %% 利用共轭梯度求解
     beta = pcg(A, b, 1e-6, 60);
     
-    %% Compute the result
-    beta = reshape(beta, H, W);
-    
+    %% 计算结果
+    beta = reshape(beta, H, W);   
     P = reshape(P, H, W);
-    
     T = P .^ beta;
 end

@@ -1,39 +1,38 @@
-function S = GenStroke(im, ks, width, dirNum)
+function S = GenStroke(im, width, dirNum)
 % ==============================================
-%   Compute the stroke structure 'S'
+%   生成轮廓图 'S'
 %  
 %   Paras:
-%   @im        : input image ranging value from 0 to 1.
-%   @ks        : kernel size.
-%   @width     : width of the strocke
-%   @dirNum    : number of directions.
+%   @im        : 输入图像
+%   @width     : 笔画宽度
+%   @dirNum    : 卷积方向的数量
 %
     
-    %% Initialization
+    %% 参数设定
     [H, W, ~] = size(im);
     
     %% Smoothing
-    im = medfilt2(im, [3 3]);
+%     im = medfilt2(im, [3 3]);
     
-    %% Image gradient
-    imX = [abs(im(:,1:(end-1)) - im(:,2:end)),zeros(H,1)];
-    imY = [abs(im(1:(end-1),:) - im(2:end,:));zeros(1,W)];  
-    imEdge = imX + imY;
-
-    %% Convolution kernel with horizontal direction 
+    %% 梯度大小
+    [imX,imY]=gradient(im);
+    imEdge = sqrt(imX.^2 + imY.^2);
+    
+    %% 水平方向上的卷积核
+    %大小为图像高或者宽的1/30
+    ks=floor(W/60);
     kerRef = zeros(ks*2+1);
     kerRef(ks+1,:) = 1;
 
-    %% Classification 
+    %% 分八个方向进行卷积,聚集同一方向上的邻接点 
     response = zeros(H,W,dirNum);
     for n = 1 : dirNum
         ker = imrotate(kerRef, (n-1)*180/dirNum, 'bilinear', 'crop');
         response(:,:,n) = conv2(imEdge, ker, 'same');
     end
-
     [~, index] = max(response,[], 3); 
 
-    %% Create the stroke
+    %% 反转像素值映射到[0,1]生成笔画
     C = zeros(H, W, dirNum);
     for n = 1 : dirNum
         C(:,:,n) = imEdge .* (index == n);
