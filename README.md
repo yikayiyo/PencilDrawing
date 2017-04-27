@@ -1,6 +1,6 @@
 # 说明
 
-
+素描画实现
 
 原版在[这里](https://github.com/candycat1992/PencilDrawing/blob/master/README.md).
 
