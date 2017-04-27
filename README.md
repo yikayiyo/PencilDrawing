@@ -4,7 +4,7 @@
 Implement the algorithm presented in [1]. You can use the code like below to get a pencil drawing production:
 
 ```C++
-I = PencilDrawing(im, ks, width, dirNum, gammaS, gammaI);
+I = PencilDrawing(im, width, gammaS, gammaI);
 ```
 
 See demo.m for example.
