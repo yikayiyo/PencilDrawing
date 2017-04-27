@@ -1,30 +1,30 @@
 function S = GenStroke(im, width, dirNum)
 % ==============================================
-%   Éú³ÉÂÖÀªÍ¼ 'S'
+%   ç”Ÿæˆè½®å»“å›¾ 'S'
 %  
 %   Paras:
-%   @im        : ÊäÈëÍ¼Ïñ
-%   @width     : ±Ê»­¿í¶È
-%   @dirNum    : ¾í»ý·½ÏòµÄÊýÁ¿
+%   @im        : è¾“å…¥å›¾åƒ
+%   @width     : ç¬”ç”»å®½åº¦
+%   @dirNum    : å·ç§¯æ–¹å‘çš„æ•°é‡
 %
     
-    %% ²ÎÊýÉè¶¨
+    %% å‚æ•°è®¾å®š
     [H, W, ~] = size(im);
     
     %% Smoothing
 %     im = medfilt2(im, [3 3]);
     
-    %% ÌÝ¶È´óÐ¡
+    %% æ¢¯åº¦å¤§å°
     [imX,imY]=gradient(im);
     imEdge = sqrt(imX.^2 + imY.^2);
     
-    %% Ë®Æ½·½ÏòÉÏµÄ¾í»ýºË
-    %´óÐ¡ÎªÍ¼Ïñ¸ß»òÕß¿íµÄ1/30
+    %% æ°´å¹³æ–¹å‘ä¸Šçš„å·ç§¯æ ¸
+    %å¤§å°ä¸ºå›¾åƒé«˜æˆ–è€…å®½çš„1/30
     ks=floor(W/60);
     kerRef = zeros(ks*2+1);
     kerRef(ks+1,:) = 1;
 
-    %% ·Ö°Ë¸ö·½Ïò½øÐÐ¾í»ý,¾Û¼¯Í¬Ò»·½ÏòÉÏµÄÁÚ½Óµã 
+    %% åˆ†å…«ä¸ªæ–¹å‘è¿›è¡Œå·ç§¯,èšé›†åŒä¸€æ–¹å‘ä¸Šçš„é‚»æŽ¥ç‚¹ 
     response = zeros(H,W,dirNum);
     for n = 1 : dirNum
         ker = imrotate(kerRef, (n-1)*180/dirNum, 'bilinear', 'crop');
@@ -32,23 +32,13 @@ function S = GenStroke(im, width, dirNum)
     end
     [~, index] = max(response,[], 3); 
 
-    %% ·´×ªÏñËØÖµÓ³Éäµ½[0,1]Éú³É±Ê»­
+    
     C = zeros(H, W, dirNum);
     for n = 1 : dirNum
         C(:,:,n) = imEdge .* (index == n);
     end
 
-    kerRef = zeros(ks*2+1);
-    kerRef(ks+1,:) = 1;
-    for n = 1 : width
-        if (ks+1-n) > 0
-            kerRef(ks+1-n,:) = 1;
-        end
-        if (ks+1+n) < (ks*2+1)
-            kerRef(ks+1+n,:) = 1;
-        end
-    end
-    
+    %% ç”Ÿæˆçº¿æ¡,åè½¬åƒç´ å€¼æ˜ å°„åˆ°[0,1]ç”Ÿæˆç¬”ç”»
     Spn = zeros(H, W, dirNum);
     for n = 1 : dirNum
         ker = imrotate(kerRef, (n-1)*180/dirNum, 'bilinear', 'crop');
